@@ -13,6 +13,8 @@ frontend:
   phases:
     preBuild:
       commands:
+        # `install` rather than `use`: it's idempotent, and it doesn't assume
+        # Amplify's build image happens to ship the version we want today.
         - nvm install 22
         - nvm use 22
         - node --version
@@ -32,28 +34,5 @@ frontend:
       - node_modules/**/*
       - .next/cache/**/*
 
-# A static export has no server, so next.config.mjs headers() never runs.
-# These are the equivalents, applied by Amplify's CDN.
-customHeaders:
-  - pattern: "/video/**"
-    headers:
-      - key: Cache-Control
-        value: "public, max-age=31536000, immutable"
-  - pattern: "/images/**"
-    headers:
-      - key: Cache-Control
-        value: "public, max-age=31536000, immutable"
-  - pattern: "/_next/static/**"
-    headers:
-      - key: Cache-Control
-        value: "public, max-age=31536000, immutable"
-  - pattern: "**"
-    headers:
-      - key: X-Content-Type-Options
-        value: nosniff
-      - key: Referrer-Policy
-        value: strict-origin-when-cross-origin
-      - key: Permissions-Policy
-        value: "camera=(), microphone=(), geolocation=()"
-      - key: Strict-Transport-Security
-        value: "max-age=63072000; includeSubDomains"
+# Response headers are NOT configured here — a customHeaders block in this
+# file is the deprecated location and is silently ignored. See customHttp.yml.

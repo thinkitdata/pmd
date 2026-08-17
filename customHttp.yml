@@ -1,0 +1,46 @@
+# ============================================================================
+# AWS Amplify custom response headers.
+#
+# This has to be its own file at the repository root — a `customHeaders` block
+# inside amplify.yml is the deprecated location and is silently ignored, which
+# is a fun way to lose an afternoon.
+#
+# Amplify's default for everything is:
+#   cache-control: public, max-age=0, s-maxage=31536000
+# meaning the CDN caches for a year but the browser revalidates on every visit.
+# That's a sensible default for HTML. It's wasteful for fingerprinted assets
+# and for a hero video that will never change under the same filename.
+# ============================================================================
+customHeaders:
+  # The hero loop. Same bytes forever — if you re-encode it, the filename
+  # should change too. `immutable` tells the browser not to even revalidate.
+  - pattern: "/video/*"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+
+  - pattern: "/images/*"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+
+  # Next fingerprints these filenames with a content hash, so a change to the
+  # file always changes its URL. Safe to cache forever.
+  - pattern: "/_next/static/**/*"
+    headers:
+      - key: "Cache-Control"
+        value: "public, max-age=31536000, immutable"
+
+  # Everything else — security headers. Deliberately no Cache-Control here, so
+  # HTML keeps Amplify's revalidate-on-load default and a deploy is visible
+  # immediately rather than in a year.
+  - pattern: "**/*"
+    headers:
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+      - key: "Referrer-Policy"
+        value: "strict-origin-when-cross-origin"
+      - key: "Permissions-Policy"
+        value: "camera=(), microphone=(), geolocation=()"
+      - key: "Strict-Transport-Security"
+        value: "max-age=63072000; includeSubDomains"
