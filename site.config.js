@@ -41,12 +41,11 @@ export const site = {
    * on a phone than a picture of a number.
    */
   logo: {
-    // TODO — save the artwork as site/public/images/logo.png, then set this
-    // to "/images/logo.png". Left blank the footer uses the wordmark, so
-    // nothing is broken in the meantime.
-    src: "",
+    // Phone bar cropped off, black keyed to transparency so it sits cleanly
+    // on the footer's ink. The number is a tappable link below it instead.
+    src: "/images/logo.png",
     alt: "Prime Mobile Auto Detailing",
-    maxWidth: 260,
+    maxWidth: 280,
   },
   tagline: "The finest work leaves no trace.",
   description:
@@ -62,33 +61,32 @@ export const site = {
   // Mobile business: you serve an area, you don't have a storefront.
   // This shape maps directly onto LocalBusiness structured data.
   serviceArea: {
-    // CONFIRMED
+    // CONFIRMED — 30 miles from Johns Creek, GA
     label: "Alpharetta, Johns Creek & surrounding areas",
     // A short form for tight spaces like the hero eyebrow, where the full
     // label would wrap awkwardly.
     shortLabel: "Alpharetta · Johns Creek",
-    radiusMiles: 25, // TODO — how far will you actually drive?
+    radiusMiles: 30,
 
-    // Midpoint between Alpharetta and Johns Creek. This is the centre of the
-    // GeoCircle in your structured data, so it should sit near where you
-    // actually start your day. Right-click your home base in Google Maps to
-    // get exact coordinates.
-    lat: 34.052, // TODO — refine to your base
-    lng: -84.246, // TODO
+    // Johns Creek, GA — the centre of the GeoCircle in your structured data.
+    lat: 34.0289,
+    lng: -84.1986,
 
     // A real local-search signal: people search "ceramic coating Alpharetta",
-    // not "ceramic coating Georgia". Only list places you'll genuinely drive
-    // to — padding this earns you calls you have to turn down.
+    // not "ceramic coating Georgia". These all fall inside 30 miles of Johns
+    // Creek and skew toward the neighbourhoods where the cars you want live.
     towns: [
-      "Alpharetta",
       "Johns Creek",
+      "Alpharetta",
       "Milton",
       "Roswell",
       "Duluth",
       "Suwanee",
       "Cumming",
+      "Peachtree Corners",
       "Sandy Springs",
-    ], // TODO — trim or extend to match your real radius
+      "Dunwoody",
+    ],
   },
 
   hours: [
