@@ -1,0 +1,33 @@
+# ============================================================================
+# Nightly rebuild — only needed on the static-export path.
+#
+# A static export fetches Instagram at build time, so the feed is as fresh as
+# the last build. This pokes Amplify's incoming webhook once a night to pick up
+# new posts.
+#
+# Setup:
+#   Amplify console → App settings → Build settings → Incoming webhooks →
+#   Create webhook. Save the URL as the repo secret AMPLIFY_WEBHOOK_URL.
+#
+# You do NOT need this on Vercel — there the Instagram fetch revalidates
+# hourly on its own.
+# ============================================================================
+name: Nightly rebuild
+
+on:
+  schedule:
+    - cron: "30 7 * * *" # 07:30 UTC — roughly 3:30am Eastern
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the Amplify build
+        run: |
+          if [ -z "${{ secrets.AMPLIFY_WEBHOOK_URL }}" ]; then
+            echo "AMPLIFY_WEBHOOK_URL is not set — skipping."
+            exit 0
+          fi
+          curl -fsSL -X POST -d {} "${{ secrets.AMPLIFY_WEBHOOK_URL }}"
+          echo "Rebuild triggered."

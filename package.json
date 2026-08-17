@@ -1,0 +1,24 @@
+{
+  "name": "prime-mobile-detailing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prime Mobile Detailing — marketing site",
+  "scripts": {
+    "dev": "next dev",
+    "dev:lan": "next dev -H 0.0.0.0",
+    "build": "next build",
+    "preview": "npx --yes serve@latest out -l 3000",
+    "preview:lan": "npx --yes serve@latest out -l tcp://0.0.0.0:3000",
+    "doctor": "node scripts/doctor.mjs",
+    "lint": "next lint",
+    "refresh:instagram": "node scripts/refresh-instagram-token.mjs"
+  },
+  "dependencies": {
+    "next": "^16.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

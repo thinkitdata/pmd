@@ -1,0 +1,23 @@
+node_modules/
+.next/
+out/
+build/
+
+.env
+.env.local
+.env*.local
+
+.DS_Store
+*.pem
+npm-debug.log*
+yarn-error.log*
+.vercel
+next-env.d.ts
+
+# Raw camera footage — keep masters out of git, they belong in S3/Drive.
+# Only the compressed web derivatives in public/video should be committed.
+/raw-footage/
+*.mov
+*.MOV
+*.mxf
+*.braw

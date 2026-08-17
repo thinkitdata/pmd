@@ -1,0 +1,45 @@
+# ============================================================================
+# Keeps the Instagram token alive, host-independently.
+#
+# Instagram long-lived tokens expire after 60 days. This refreshes weekly —
+# each refresh resets the clock to a full 60 days, so it can never lapse — and
+# writes the new value straight back into the repo secret.
+#
+# Setup:
+#   1. Settings → Secrets → Actions → new secret INSTAGRAM_ACCESS_TOKEN
+#   2. Create a fine-grained PAT with "Secrets: read and write" on this repo,
+#      and save it as the secret GH_PAT.
+#
+# This replaces app/api/instagram/refresh/route.js and vercel.json's cron.
+# Use whichever fits your host; you don't need both.
+# ============================================================================
+name: Refresh Instagram token
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+  workflow_dispatch: # lets you run it by hand from the Actions tab
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Refresh the token
+        id: refresh
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+        run: node scripts/refresh-instagram-token.mjs
+
+      - name: Persist the new token
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh secret set INSTAGRAM_ACCESS_TOKEN \
+            --body "${{ steps.refresh.outputs.token }}" \
+            --repo "${{ github.repository }}"

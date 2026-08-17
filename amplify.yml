@@ -1,0 +1,57 @@
+# ============================================================================
+# AWS Amplify Hosting build spec — static export target.
+#
+# Amplify's managed SSR provider does not support Next.js 16 (as of this
+# writing it tops out at 15). That's a non-issue here because we deploy the
+# static export instead: it is just files, so no host needs to understand
+# which Next.js version produced them.
+#
+# In the Amplify console set the build output directory to `out`.
+# ============================================================================
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm use 22
+        - npm ci
+    build:
+      commands:
+        # next.config.mjs exports a static site by default, so this just works.
+        # The Instagram feed is fetched at build time, so a rebuild is what
+        # refreshes it — see the nightly workflow in .github/workflows/.
+        - npm run build
+  artifacts:
+    baseDirectory: out
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
+
+# A static export has no server, so next.config.mjs headers() never runs.
+# These are the equivalents, applied by Amplify's CDN.
+customHeaders:
+  - pattern: "/video/**"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=31536000, immutable"
+  - pattern: "/images/**"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=31536000, immutable"
+  - pattern: "/_next/static/**"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=31536000, immutable"
+  - pattern: "**"
+    headers:
+      - key: X-Content-Type-Options
+        value: nosniff
+      - key: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - key: Permissions-Policy
+        value: "camera=(), microphone=(), geolocation=()"
+      - key: Strict-Transport-Security
+        value: "max-age=63072000; includeSubDomains"
