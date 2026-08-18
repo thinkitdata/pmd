@@ -38,26 +38,15 @@ export default function LocalBusinessJsonLd() {
       "@type": "City",
       name: t,
     })),
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-        ],
-        opens: "08:00",
-        closes: "18:00",
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Saturday"],
-        opens: "09:00",
-        closes: "16:00",
-      },
-    ],
+    // Driven from site.config so the structured data can never drift from the
+    // hours shown in the footer. These were previously hardcoded here, which
+    // meant changing the visible hours silently left Google with the old ones.
+    openingHoursSpecification: (site.openingHours || []).map((h) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: h.days,
+      opens: h.opens,
+      closes: h.closes,
+    })),
     sameAs: Object.values(site.social).filter(
       (v) => typeof v === "string" && v.startsWith("http")
     ),

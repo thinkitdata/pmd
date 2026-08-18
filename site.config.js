@@ -89,10 +89,29 @@ export const site = {
     ],
   },
 
+  /**
+   * Two representations of the same thing, deliberately.
+   *
+   * `hours` is what humans read in the footer.
+   * `openingHours` is what Google reads in the structured data.
+   *
+   * KEEP THEM IN SYNC, and keep both in sync with your Cal.com availability.
+   * A site that advertises Saturday while the calendar refuses Saturday
+   * generates a support call every single time.
+   */
   hours: [
-    { days: "Monday – Friday", time: "8:00 – 18:00" }, // TODO
-    { days: "Saturday", time: "9:00 – 16:00" }, // TODO
-    { days: "Sunday", time: "By appointment" }, // TODO
+    { days: "Monday – Friday", time: "7:00 – 16:00" },
+    { days: "Saturday – Sunday", time: "Closed" },
+  ],
+
+  // Machine-readable, 24-hour. Only list days you actually work — omitting a
+  // day means closed, which is what Google expects.
+  openingHours: [
+    {
+      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "07:00",
+      closes: "16:00",
+    },
   ],
 
   // --- social -------------------------------------------------------------
@@ -113,8 +132,8 @@ export const site = {
   // Your Cal.com link is "username/event-slug".
   // Create one event type per service so the duration and buffer are right.
   booking: {
-    calUsername: "prime-detailing", // TODO
-    defaultEvent: "consultation", // TODO — a 15-min intro call
+    calUsername: "primemobiledetails",
+    defaultEvent: "consultation", // a 15-min intro call
     // Cal.com theme tokens so the widget matches the site, not Cal's defaults.
     // These are --gold-600 and --gold-400 from globals.css — keep them in sync
     // if you ever change the accent.
