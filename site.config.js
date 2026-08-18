@@ -181,6 +181,8 @@ export const services = [
     duration: "4–5 hours",
     price: "from $275",
     calEvent: "refresh",
+    featured: true,
+    flag: "Available now",
     summary:
       "A full reset for a car that's already cared for. Keeps a good finish good.",
     includes: [
@@ -197,8 +199,10 @@ export const services = [
     duration: "1–2 days",
     price: "from $850",
     calEvent: "restoration",
-    featured: true,
-    flag: "Most requested",
+    // Set to false the day your detailer is trained and you're taking these.
+    // That one word turns the card, the booking page and the structured data
+    // from "coming soon" to "bookable" — nothing else to change.
+    comingSoon: true,
     summary:
       "Multi-stage paint correction. Swirls, holograms, and etching taken out — not filled in.",
     includes: [
@@ -216,6 +220,7 @@ export const services = [
     duration: "2–3 days",
     price: "from $1,650",
     calEvent: "ceramic",
+    comingSoon: true,
     summary:
       "Correction followed by a professional-grade coating. Years of protection, measurable gloss.",
     includes: [

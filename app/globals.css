@@ -1026,6 +1026,44 @@ p {
   padding: 0.35rem 0.8rem;
   font-weight: 600;
 }
+/* Not-yet-offered services: outlined rather than filled, so the card still
+   reads as part of the range without competing with what you can sell today. */
+.service__flag--soon {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid currentColor;
+  border-top: 0;
+  border-right: 0;
+  font-weight: 500;
+}
+/* A quieter card overall — present and credible, clearly not yet bookable. */
+.service--soon .service__name,
+.service--soon .service__price {
+  opacity: 0.78;
+}
+.service--soon .service__list {
+  opacity: 0.62;
+}
+
+/* the "we'll tell you when it's ready" panel on a coming-soon booking page */
+.soon-panel {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.75rem, 4vw, 3rem);
+  background: linear-gradient(
+    160deg,
+    rgba(var(--accent-rgb), 0.07),
+    transparent 60%
+  );
+}
+.soon-panel__mark {
+  font-size: var(--step--1);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
 .service__name {
   font-family: var(--font-display);
   font-size: var(--step-2);

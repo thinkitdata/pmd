@@ -122,9 +122,17 @@ export default function Home() {
                 key={s.slug}
                 id={s.slug}
                 i={i}
-                className={`service${s.featured ? " service--featured" : ""}`}
+                className={`service${s.featured ? " service--featured" : ""}${
+                  s.comingSoon ? " service--soon" : ""
+                }`}
               >
-                {s.flag && <span className="service__flag">{s.flag}</span>}
+                {s.comingSoon ? (
+                  <span className="service__flag service__flag--soon">
+                    Coming soon
+                  </span>
+                ) : (
+                  s.flag && <span className="service__flag">{s.flag}</span>
+                )}
                 <h3 className="service__name">{s.name}</h3>
                 <div className="service__meta">
                   <span className="service__price">{s.price}</span>

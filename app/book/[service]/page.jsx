@@ -22,8 +22,12 @@ export async function generateMetadata({ params }) {
   const service = services.find((s) => s.slug === slug);
   if (!service) return {};
   return {
-    title: `Reserve ${service.name}`,
-    description: `${service.summary} ${service.price}, ${service.duration}. Mobile service across ${site.serviceArea.label}.`,
+    title: service.comingSoon
+      ? `${service.name} — coming soon`
+      : `Reserve ${service.name}`,
+    description: service.comingSoon
+      ? `${service.summary} Coming soon to ${site.serviceArea.label} — get in touch to hear first.`
+      : `${service.summary} ${service.price}, ${service.duration}. Mobile service across ${site.serviceArea.label}.`,
     alternates: { canonical: `/book/${service.slug}` },
   };
 }

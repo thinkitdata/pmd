@@ -73,6 +73,11 @@ export default function LocalBusinessJsonLd() {
         },
         priceCurrency: "USD",
         price: s.price.replace(/[^0-9.]/g, ""),
+        // Don't tell Google you sell something you can't deliver yet.
+        // PreOrder is the honest term for "announced, not yet available".
+        availability: s.comingSoon
+          ? "https://schema.org/PreOrder"
+          : "https://schema.org/InStock",
       })),
     },
   };

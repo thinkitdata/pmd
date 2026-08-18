@@ -65,9 +65,28 @@ export default function ServicesPage() {
                   <span className="service__price">{s.price}</span>
                   <span>· {s.duration}</span>
                 </div>
+
+                {s.comingSoon && (
+                  <p
+                    style={{
+                      marginTop: "1rem",
+                      fontSize: "var(--step--1)",
+                      color: "var(--accent)",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Coming soon
+                  </p>
+                )}
+
                 <div className="btn-row" style={{ marginTop: "2rem" }}>
-                  <Link href={`/book/${s.slug}`} className="btn btn--accent">
-                    Reserve {s.name}
+                  <Link
+                    href={`/book/${s.slug}`}
+                    className={`btn ${s.comingSoon ? "btn--ghost" : "btn--accent"}`}
+                  >
+                    {s.comingSoon ? "Join the list" : `Reserve ${s.name}`}
                   </Link>
                 </div>
               </div>
