@@ -130,7 +130,11 @@ export const site = {
 
   // --- booking ------------------------------------------------------------
   // Your Cal.com link is "username/event-slug".
-  // Create one event type per service so the duration and buffer are right.
+  //
+  // NOTE: Cal.com requires event slugs of at least 10 characters, lowercase
+  // letters, numbers and dashes only. That's why every calEvent below is
+  // prefixed "the-" — it clears the minimum and matches the service names as
+  // written on the site. Each must match its Cal.com event URL exactly.
   booking: {
     calUsername: "primemobiledetails",
     defaultEvent: "consultation", // a 15-min intro call
@@ -199,7 +203,7 @@ export const services = [
     name: "The Refresh",
     duration: "4–5 hours",
     price: "from $275",
-    calEvent: "refresh",
+    calEvent: "the-refresh",
     featured: true,
     flag: "Available now",
     summary:
@@ -217,7 +221,7 @@ export const services = [
     name: "The Restoration",
     duration: "1–2 days",
     price: "from $850",
-    calEvent: "restoration",
+    calEvent: "the-restoration",
     // Set to false the day your detailer is trained and you're taking these.
     // That one word turns the card, the booking page and the structured data
     // from "coming soon" to "bookable" — nothing else to change.
@@ -238,7 +242,7 @@ export const services = [
     name: "The Ceramic",
     duration: "2–3 days",
     price: "from $1,650",
-    calEvent: "ceramic",
+    calEvent: "the-ceramic",
     comingSoon: true,
     summary:
       "Correction followed by a professional-grade coating. Years of protection, measurable gloss.",
@@ -256,7 +260,7 @@ export const services = [
     name: "The Keeper",
     duration: "per visit",
     price: "from $180",
-    calEvent: "keeper",
+    calEvent: "the-keeper",
     summary:
       "A standing appointment for the car you intend to keep. We come to you on a rhythm.",
     includes: [

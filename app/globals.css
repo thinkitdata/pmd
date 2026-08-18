@@ -1498,13 +1498,44 @@ p {
     grid-template-columns: 0.85fr 1.4fr;
   }
 }
+.cal-wrap {
+  position: relative;
+  min-height: 620px;
+}
 .cal-embed {
   min-height: 620px;
   width: 100%;
   overflow: hidden;
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
-  background: var(--rice-50);
+  /* Ink, not white. If Cal fails to load, an empty dark panel reads as part
+     of the page; an empty white rectangle reads as a broken site. Cal's own
+     iframe paints its light background over this once it arrives. */
+  background: var(--ink-800);
+}
+/* Sits over the embed until Cal's iframe appears. */
+.cal-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  text-align: center;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  background: var(--ink-800);
+}
+.cal-status__text {
+  color: var(--fg-faint);
+  font-size: var(--step--1);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.cal-status__fail {
+  max-width: 44ch;
+}
+.cal-status__fail .btn-row {
+  justify-content: center;
 }
 
 /* ------------------------------------------------------------- utils */

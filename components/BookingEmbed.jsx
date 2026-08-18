@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/site.config";
 
 /**
@@ -19,6 +19,8 @@ import { site } from "@/site.config";
  */
 export default function BookingEmbed({ event }) {
   const mounted = useRef(false);
+  // "loading" → "ready" once Cal injects its iframe, or "failed" on timeout.
+  const [state, setState] = useState("loading");
   const slug = event || site.booking.defaultEvent;
   const calLink = `${site.booking.calUsername}/${slug}`;
 
@@ -79,14 +81,63 @@ export default function BookingEmbed({ event }) {
       hideEventTypeDetails: false,
       layout: "month_view",
     });
+    // Watch for Cal actually injecting its iframe. If nothing appears within
+    // the timeout the widget has failed — wrong slug, blocked script, Cal
+    // outage — and we show a way to reach a human instead of a blank box.
+    const target = document.getElementById("cal-inline");
+    if (!target) return;
+
+    const observer = new MutationObserver(() => {
+      if (target.querySelector("iframe")) {
+        setState("ready");
+        observer.disconnect();
+      }
+    });
+    observer.observe(target, { childList: true, subtree: true });
+
+    const timer = setTimeout(() => {
+      if (!target.querySelector("iframe")) setState("failed");
+    }, 8000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
   }, [slug, calLink]);
 
   return (
-    <div
-      id="cal-inline"
-      className="cal-embed"
-      style={{ overflow: "scroll" }}
-      aria-label="Booking calendar"
-    />
+    <div className="cal-wrap">
+      <div
+        id="cal-inline"
+        className="cal-embed"
+        style={{ overflow: "scroll" }}
+        aria-label="Booking calendar"
+      />
+
+      {state !== "ready" && (
+        <div className="cal-status" role="status">
+          {state === "loading" ? (
+            <p className="cal-status__text">Loading the calendar…</p>
+          ) : (
+            <div className="cal-status__fail">
+              <p className="soon-panel__mark">Calendar unavailable</p>
+              <p style={{ color: "var(--fg-muted)", marginBottom: "1.75rem" }}>
+                The booking calendar isn&rsquo;t loading right now. Don&rsquo;t
+                let that stop you — call or email and we&rsquo;ll get you on the
+                schedule the same day.
+              </p>
+              <div className="btn-row">
+                <a href={site.phoneHref} className="btn">
+                  {site.phone}
+                </a>
+                <a href={`mailto:${site.email}`} className="btn btn--ghost">
+                  Email us
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
