@@ -132,9 +132,14 @@ export const site = {
   // Your Cal.com link is "username/event-slug".
   //
   // NOTE: Cal.com requires event slugs of at least 10 characters, lowercase
-  // letters, numbers and dashes only. That's why every calEvent below is
-  // prefixed "the-" — it clears the minimum and matches the service names as
-  // written on the site. Each must match its Cal.com event URL exactly.
+  // letters, numbers and dashes only — hence the "the-" prefixes.
+  //
+  // `the-refresh` could NOT be used: Cal rejects it with a silent 400, meaning
+  // the slug is reserved by something invisible in the account (probably a
+  // soft-deleted record). Hence `the-refresh-detail`. If you ever free that
+  // slug up, both this file and the Cal event URL must change together.
+  //
+  // Each calEvent MUST match its Cal.com event URL exactly.
   booking: {
     calUsername: "primemobiledetails",
     defaultEvent: "consultation", // a 15-min intro call
@@ -203,7 +208,7 @@ export const services = [
     name: "The Refresh",
     duration: "4–5 hours",
     price: "from $275",
-    calEvent: "the-refresh",
+    calEvent: "the-refresh-detail",
     featured: true,
     flag: "Available now",
     summary:

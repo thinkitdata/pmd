@@ -494,6 +494,98 @@ Also: Ubuntu 22.04's apt `nodejs` is **v12**. Next.js 16 needs ≥20.9. Use nvm.
 
 ---
 
+## Part 4.5 — Integrating a third-party service (Cal.com)
+
+Booking is Cal.com, embedded. Rebuilding real availability, timezones, buffers,
+reminders and reschedule links is a genuinely hard problem and not one worth
+solving for a detailing business. But integrating someone else's service has
+its own failure modes, and this one taught us four.
+
+### The site→service contract is a string, and strings drift
+
+`site.config.js` holds `calEvent` per service. The site builds a URL from it:
+
+```
+cal.com/<calUsername>/<calEvent>
+```
+
+If that slug doesn't exist on Cal, the embed loads nothing. **There is no error
+— just an empty container.** Two systems, one shared identifier, no schema
+enforcing it. Any time you integrate this way, ask: what happens when the two
+sides disagree, and how would I find out?
+
+### Failure mode 1 — the empty container
+
+Our first symptom was a white box where the calendar should be. That's the
+worst possible failure for the thing that takes your money: no error, no
+explanation, no path forward for the customer.
+
+`components/BookingEmbed.jsx` now has three states. A `MutationObserver`
+watches for Cal injecting its iframe; if none appears within 8 seconds it shows
+the phone number and an email button. The container is ink rather than white,
+so a failure reads as part of the page rather than a broken site.
+
+> Every third-party embed will fail eventually — bad slug, outage, ad-blocker,
+> corporate firewall. **Decide what the customer sees when it does**, and build
+> that path deliberately.
+
+### Failure mode 2 — undocumented constraints
+
+Cal requires event slugs of **at least 10 characters**. Our natural choices —
+`refresh` (7), `keeper` (6) — were rejected. We prefixed with `the-`, which
+clears the minimum and matches the service names.
+
+You cannot know these limits in advance. Discover them, then **write them down
+in a comment at the point of use** so the next person doesn't rediscover them.
+
+### Failure mode 3 — the UI moved
+
+Cal's own documentation described nine tabs — Basics, Availability, Limits,
+Advanced. The live product had none of them; settings had moved to a left
+sidebar, and "Event Types" was renamed "Links". Two rounds of guidance based on
+that documentation sent the client hunting for menus that no longer existed.
+
+**Vendor documentation lags vendor UI.** When someone says "I can't find it,"
+believe them and go look, rather than describing the interface again more
+firmly.
+
+There was also a naming trap in the redesign: Cal now has both **Links**
+(repeatable booking links — what you want) and **Events** (one-off happenings
+with a fixed date). "Events" is the more natural-sounding word, so it's an easy
+wrong turn, and the settings you're looking for don't exist on that side.
+
+### Failure mode 4 — the silent 400
+
+Creating `the-refresh` failed four times with no visible message. The dialog
+just sat there. Reading the console showed `eventTypesHeavy.create` mutations
+firing and erroring; the network panel showed **HTTP 400**. Appending `-x` to
+the slug made it save instantly — the slug was reserved by something invisible
+in the account, probably a soft-deleted record.
+
+The debugging sequence is the transferable part:
+
+1. **Is the request even being sent?** Console showed the mutation firing — so
+   the clicks worked and it wasn't a dead button.
+2. **What does the server say?** Network showed 400 — a validation rejection,
+   not an auth or server problem.
+3. **Which field?** Change one variable at a time. Duration 300→60: still
+   failed. Slug + `-x`: succeeded. That isolates it.
+
+Without steps 1 and 2 we'd have kept re-clicking a button that was working
+fine. **Distinguish "nothing happened" from "something happened and failed
+silently" before you start changing things.**
+
+### And a real API's rules are not yours to negotiate
+
+`the-refresh` was unavailable and we couldn't free it without deleting data of
+unknown importance. So the site changed instead: `calEvent: "the-refresh-detail"`.
+
+That's usually the right call. **When an external system won't bend, bend your
+own config** — it's a one-line change you control, versus fighting a black box
+you don't.
+
+---
+
 ## Part 5 — SEO, since it's most of why the site exists
 
 The client is a local business. Being found in "detailing near me" searches is
