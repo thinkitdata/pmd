@@ -105,3 +105,57 @@ of value:
 Shoot in the shade or on an overcast day. Direct midday sun blows out the
 highlights that make paint look deep, and it hides exactly the defects your
 before/after is trying to show.
+
+---
+
+## Rebuilding the hero from a vertical source clip (added 27 Aug 2026)
+
+All current footage is vertical 9:16. The hero is pillarboxed with the footage
+itself rather than cropped or outpainted — see `public/ASSET-PROVENANCE.md` for
+the reasoning. To rebuild from a different clip:
+
+```bash
+SRC=path/to/clip.MP4
+START=4.5      # seconds
+LEN=6          # seconds; palindrome doubles this to the final duration
+
+# 1. feather mask — width must match the scaled strip (source_w * 1080/source_h)
+python3 -c "
+from PIL import Image
+W,H,F=608,1080,110
+m=Image.new('L',(W,H),255); px=m.load()
+for x in range(W):
+    v=255
+    if x<F: v=int(255*(x/F)**0.85)
+    elif x>W-F-1: v=int(255*((W-1-x)/F)**0.85)
+    for y in range(H): px[x,y]=v
+m.save('feather.png')"
+
+# 2. composite
+ffmpeg -ss $START -t $LEN -i "$SRC" -loop 1 -i feather.png -filter_complex "\
+[0:v]split=2[bg][fg];\
+[bg]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,\
+gblur=sigma=44,eq=brightness=-0.30:saturation=0.60[bgb];\
+[fg]scale=-2:1080:flags=lanczos,format=yuva420p[fgs];\
+[1:v]format=gray[mk];[fgs][mk]alphamerge[fga];\
+[bgb][fga]overlay=(W-w)/2:0,format=yuv420p[v]" \
+ -map "[v]" -an -t $LEN -c:v libx264 -crf 20 -preset slow comp.mp4
+
+# 3. palindrome for a seamless loop
+ffmpeg -i comp.mp4 -filter_complex \
+ "[0:v]split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1[v]" -map "[v]" -an \
+ -c:v libx264 -crf 18 loop.mp4
+
+# 4. ship
+ffmpeg -i loop.mp4 -an -c:v libx264 -profile:v high -pix_fmt yuv420p \
+ -crf 27 -preset slow -movflags +faststart hero.mp4
+ffmpeg -i loop.mp4 -an -c:v libvpx-vp9 -b:v 0 -crf 36 -row-mt 1 \
+ -cpu-used 3 -deadline good hero.webm
+ffmpeg -ss 3 -i loop.mp4 -frames:v 1 -q:v 3 ../images/hero-poster.jpg
+```
+
+`-movflags +faststart` and `-pix_fmt yuv420p` are both load-bearing: without
+the first the video won't start until fully buffered, without the second Safari
+and several Android browsers refuse to decode it at all.
+
+Keep the result under ~3 MB. Current: 1.8 MB mp4 / 1.2 MB webm at 12s.
