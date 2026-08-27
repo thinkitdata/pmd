@@ -11,21 +11,46 @@
 # That's a sensible default for HTML. It's wasteful for fingerprinted assets
 # and for a hero video that will never change under the same filename.
 # ============================================================================
+# ----------------------------------------------------------------------------
+# THE RULE, learned the hard way on 27 Aug 2026:
+#
+#   `immutable` is a promise about the URL, not about the file.
+#
+# It means "this URL's bytes will never change, so never revalidate — not on
+# refresh, not on reload, for the whole max-age." It is only ever safe when the
+# filename contains a content hash, so that changing the file changes the URL.
+#
+# /video/* and /images/* were marked immutable with max-age=31536000 on the
+# assumption that we'd rename an asset whenever we re-encoded it. We then spent
+# a day replacing hero.mp4, hero-poster.jpg, work-0*.jpg and ig-0*.jpg in place
+# at the same paths — which is the natural workflow for a hand-managed site.
+#
+# Result: every device that had loaded the old placeholder images was locked to
+# them for a YEAR, and a normal refresh could not fix it. It surfaced as "the
+# Instagram tiles are dark gradients on my phone but fine on desktop" — the
+# phone had visited before the swap, the desktop hadn't.
+#
+# So: stable filenames get a real max-age and are allowed to revalidate.
+# Revalidation is cheap — a conditional GET returning 304 is a few hundred
+# bytes — and it is the difference between a deploy being visible and not.
+# ----------------------------------------------------------------------------
 customHeaders:
-  # The hero loop. Same bytes forever — if you re-encode it, the filename
-  # should change too. `immutable` tells the browser not to even revalidate.
+  # Films and the hero loop. Larger and changed rarely, so cache for a day,
+  # then serve stale for up to a week while refreshing in the background.
   - pattern: "/video/*"
     headers:
       - key: "Cache-Control"
-        value: "public, max-age=31536000, immutable"
+        value: "public, max-age=86400, stale-while-revalidate=604800"
 
+  # Posters, tiles, logo, OG card. Small, and the ones most likely to be
+  # swapped in place — an hour of freshness keeps iteration sane.
   - pattern: "/images/*"
     headers:
       - key: "Cache-Control"
-        value: "public, max-age=31536000, immutable"
+        value: "public, max-age=3600, stale-while-revalidate=86400"
 
   # Next fingerprints these filenames with a content hash, so a change to the
-  # file always changes its URL. Safe to cache forever.
+  # file always changes its URL. This is the ONE place `immutable` is honest.
   - pattern: "/_next/static/**/*"
     headers:
       - key: "Cache-Control"

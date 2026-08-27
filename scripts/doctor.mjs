@@ -49,6 +49,35 @@ if (existsSync("app/api")) {
   fail("app/api/ exists — a static export can't contain server route handlers. Delete it.");
 }
 
+// `immutable` promises the browser this URL's bytes will never change, so it
+// won't revalidate even on a refresh. That is only true when the filename
+// carries a content hash. We shipped it on /images/* and /video/*, then spent a
+// day replacing assets at those same paths — which locked every device that had
+// already loaded them to the old files for a year. Guard against a repeat.
+if (existsSync("customHttp.yml")) {
+  // Strip comment lines FIRST. Splitting the raw file on "- pattern:" pulls the
+  // comment that introduces the *next* block into the *current* one — and the
+  // comment above /_next/static explains when `immutable` is honest, so it made
+  // every preceding block look guilty. Cheap parsing, expensive false positive.
+  const http = readFileSync("customHttp.yml", "utf8")
+    .split("\n")
+    .filter((l) => !/^\s*#/.test(l))
+    .join("\n");
+  const blocks = http.split(/^\s*-\s*pattern:/m).slice(1);
+  for (const b of blocks) {
+    const pattern = (b.match(/^\s*"([^"]+)"/) || [])[1] || "?";
+    if (/immutable/.test(b) && !/_next/.test(pattern)) {
+      fail(
+        `customHttp.yml marks "${pattern}" immutable, but those filenames aren't ` +
+          `content-hashed. Replacing a file in place there is invisible to anyone ` +
+          `who already loaded it. Use max-age + stale-while-revalidate instead.`
+      );
+    }
+  }
+} else {
+  nag("customHttp.yml missing — no cache or security headers will be set");
+}
+
 // ----------------------------------------------------------------- config --
 head("Business details (site.config.js)");
 if (existsSync("site.config.js")) {
