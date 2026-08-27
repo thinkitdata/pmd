@@ -60,7 +60,12 @@ if (existsSync("site.config.js")) {
   if (/555\) 555-0134/.test(src)) nag("Still using the placeholder phone number");
   if (/logo:\s*\{[^}]*src:\s*""/.test(src)) nag("No logo set — the footer falls back to the wordmark");
   if (/calUsername:\s*"prime-detailing"/.test(src)) nag("Cal.com username not set yet");
-  if (/cloudflareCustomerCode:\s*""/.test(src)) nag("Cloudflare Stream customer code not set — gallery films won't play");
+  // Only relevant if a gallery entry actually asks for Stream. The films are
+  // self-hosted now, so a blank customer code is the expected state, not a
+  // fault — nagging about it trains people to ignore the doctor.
+  if (/streamId:\s*"\S/.test(src) && /cloudflareCustomerCode:\s*""/.test(src)) {
+    nag("A gallery entry has a streamId but cloudflareCustomerCode is blank — that film won't play");
+  }
 }
 
 // ------------------------------------------------------------------ media --
@@ -80,12 +85,28 @@ const missing = ["hero-poster.jpg", "og.jpg", ...Array.from({ length: 6 }, (_, i
 if (missing.length === 0) ok("All expected images present");
 else nag(`Missing images: ${missing.join(", ")}`);
 
+// The generated placeholders are flat gradients, so they compress to almost
+// nothing. Real photographs of cars essentially never land under 40 KB at the
+// sizes this site uses.
+//
+// This used to only warn above six, which meant the last one to six fakes went
+// unreported — a clean bill of health at exactly the moment it mattered most.
+// Warn on any, and name them, so "0 problems" actually means something.
 const placeholderish = imgs.filter((f) => {
   const p = join("public/images", f);
-  return statSync(p).size < 40 * 1024; // the generated placeholders are tiny
+  return statSync(p).size < 40 * 1024;
 });
-if (placeholderish.length > 6) {
-  nag(`${placeholderish.length} images look like the generated placeholders — swap in your own before launch`);
+if (placeholderish.length === 0) {
+  ok("No placeholder images left");
+} else {
+  nag(
+    `${placeholderish.length} ${
+      placeholderish.length === 1
+        ? "image still looks like a generated placeholder"
+        : "images still look like generated placeholders"
+    } — ` +
+      `swap before launch: ${placeholderish.join(", ")}`
+  );
 }
 
 // ---------------------------------------------------------------- secrets --

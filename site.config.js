@@ -118,8 +118,8 @@ export const site = {
   // Any entry left as an empty string is hidden from the site automatically,
   // so it's safe to leave these blank until the accounts exist.
   social: {
-    // CONFIRMED — worth double-checking the leading "h_" is intentional and
-    // not a stray character; it's in the public URL people will see.
+    // CONFIRMED by Greg 27 Aug 2026: the leading "h_" is intentional and
+    // correct. It is not a typo — do not "fix" it.
     instagram: "https://instagram.com/h_primemobileautodetailing",
     instagramHandle: "@h_primemobileautodetailing",
     facebook: "", // TODO — blank entries hide themselves
@@ -170,7 +170,11 @@ export const site = {
      * Set `provider: "file"` instead if you'd rather self-host a short clip.
      */
     provider: "cloudflare-stream",
-    cloudflareCustomerCode: "", // TODO — from the Stream dashboard embed URL
+    // Intentionally blank. The six gallery films are self-hosted in
+    // /public/video (see the `clip` field on each gallery entry), so no
+    // Cloudflare account is needed. Only fill this in if you later add a film
+    // long enough to want adaptive streaming, and give that entry a streamId.
+    cloudflareCustomerCode: "",
   },
 };
 
@@ -371,9 +375,25 @@ export const gallery = [
 ];
 
 // ------------------------------------------------- instagram fallback --
-// Shown when the Instagram API is unreachable or no token is set yet.
-// Keep six good square crops here permanently — this is what protects you on
-// the day your token lapses. Put them in public/images/.
+// THIS IS THE LIVE PATH, NOT A FALLBACK. Read this before "fixing" it.
+//
+// Decided 27 Aug 2026: this site does NOT call the Instagram API. No token is
+// set, so `getInstagramPosts()` returns [] and the grid below is what renders.
+// That is the intended behaviour, not a broken integration.
+//
+// Why: the site is a static export, so server components run once at BUILD
+// time. There is no server to revalidate on, which means an API-backed feed
+// would only be as fresh as the last Amplify build anyway — and long-lived
+// Instagram tokens expire every 60 days, silently dropping the section back to
+// these images the moment one lapses. For six tiles that changes rarely, a
+// curated set has no token, no expiry, no extra infrastructure and no failure
+// mode. Swapping an image is a one-line commit.
+//
+// If you ever DO want the live feed, the code is intact — set
+// INSTAGRAM_ACCESS_TOKEN and add a scheduled Amplify rebuild plus something
+// that refreshes and stores the rotating token. See ASSET-PROVENANCE.md.
+//
+// Keep these six square (they render at aspect-ratio 1) and keep them current.
 export const instagramFallback = [
   "/images/ig-01.jpg",
   "/images/ig-02.jpg",

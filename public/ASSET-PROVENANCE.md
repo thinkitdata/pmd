@@ -73,6 +73,44 @@ strip. **Mobile visitors see only sharp native footage and no blur at all.**
 
 Rebuild command is in `public/video/README.md`.
 
+### The six Instagram tiles
+
+`images/ig-01…06.jpg`, 900×900, square (the tiles render at `aspect-ratio: 1`).
+
+| Tile | Source clip | Subject |
+| --- | --- | --- |
+| `ig-01` | `LLCD7276.MP4` @ 12s | Orange Huracán, scissor doors up, Lamborghini-crested garage |
+| `ig-02` | `cyberTruckArmy.MP4` @ 2s | Olive-wrapped Cybertruck on the drive |
+| `ig-03` | `silverBmwBike.MP4` @ 18s | BMW tourer cockpit |
+| `ig-04` | `QEYP2759.MP4` @ 3s | Sea-Doo on its trailer — **registration blurred** |
+| `ig-05` | `denali4x4.MP4` @ 40s | Lifted GMC Denali, Prime Details van behind it |
+| `ig-06` | `LNDT1766.MP4` @ 26s | Lamborghini Urus rear cabin, red on black |
+
+Chosen for range as much as quality — supercar, truck, motorcycle, watercraft,
+lifted pickup, luxury interior. The gallery carries the exotics; this strip says
+"we look after everything you own." Colours were spread deliberately (orange /
+olive / grey / purple / black / red) so the row doesn't read as one mood.
+
+**These are the live tiles, not a fallback.** This site does not call the
+Instagram API — see the long comment above `instagramFallback` in
+`site.config.js` for the full reasoning. Short version: we ship a static export,
+so a server component runs once at build time and there is nothing to revalidate
+against; an API-backed feed would be no fresher than the last Amplify build,
+while adding a token that silently expires every 60 days. To swap a tile, drop a
+new 900×900 square in and commit.
+
+Making it genuinely live later would need a scheduled Amplify rebuild *and*
+something that refreshes the rotating token and writes the new value back into
+Amplify's environment variables. The client code in `lib/instagram.js` is intact
+and would work unchanged.
+
+### Privacy
+
+Vehicle registrations are blurred where legible — `ig-04` is the only one so far
+that needed it. Worth checking any new tile for plates, house numbers and faces
+before it ships. `orangeAwesomeHellinson.MP4` in the source library shows a
+person's face and has deliberately not been used anywhere.
+
 ---
 
 ## Generated (atmosphere only)
