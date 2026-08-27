@@ -26,6 +26,31 @@ Camera originals are still being chased; see the note at the bottom.
 | `video/hero.mp4` | `KIZV8747.MP4` @ 4.5–10.5s | Orange Lamborghini Huracán, garage. Pillarboxed to 16:9 (see below), palindromed to 12s for a seamless loop. |
 | `video/hero.webm` | same | VP9, CRF 36 |
 | `images/hero-poster.jpg` | same, t=3s | |
+| `video/work-01.mp4` · `images/work-01.jpg` | `PMZV8195.MP4` @ 1.5–10.5s | Orange Huracán under foam. Detailer in branded Prime kit is visible — the best "shows the work" clip in the library. |
+| `video/work-02.mp4` · `images/work-02.jpg` | `UMMA8586.MP4` @ 40–49s | Black Rolls-Royce Ghost on the drive. |
+| `video/work-03.mp4` · `images/work-03.jpg` | `LNDT1766.MP4` @ 8–17s | Lamborghini Urus cabin — wheel, carbon, red stitching. |
+| `video/work-04.mp4` · `images/work-04.jpg` | `JZJV2586.MP4` @ 13–21s | Aston Martin, white. Identified from the winged badge on the headrest; model deliberately not named. |
+| `video/work-05.mp4` · `images/work-05.jpg` | `RIPJ0130.MP4` @ 8–17s | Hand, brush and foam on a wheel. |
+| `video/work-06.mp4` · `images/work-06.jpg` | `LLCD7276.MP4` @ 14–23s | Orange Huracán outside a Lamborghini-crested garage. |
+
+### The six gallery films
+
+Self-hosted rather than on Cloudflare Stream. Each is 8–9s, silent, vertical,
+H.264 CRF 31 capped at 1200 kbps, 244 KB–1.2 MB, ~4.5 MB for all six. They are
+fetched **only when a visitor opens one**, so they cost nothing on first paint;
+the posters are what load up front. Stream is built for long-form adaptive
+delivery and would have meant a whole account and integration for six ten-second
+loops. `streamId` is still honoured per-entry if a longer film ever needs it.
+
+Audio is stripped from all six deliberately — the source clips carry incidental
+background noise and we have no rights position on anything audible in them.
+
+**Captions are descriptive only and name no service.** Two services on this site
+are still flagged `comingSoon`, so a tile captioned "ceramic coating" would
+contradict its own service page. The previous placeholder captions did exactly
+that — they named six vehicles Prime has never touched, two of them under
+services not yet offered. If you want service-level captions, confirm what was
+actually sold per vehicle first, then rewrite them here.
 
 ### How the hero was composed
 

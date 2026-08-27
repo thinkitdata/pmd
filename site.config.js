@@ -303,50 +303,70 @@ export const process = [
 ];
 
 // --------------------------------------------------------------- gallery --
-// Each entry becomes a film tile. Replace `streamId` with your Cloudflare
-// Stream video UID, and `poster` with a still from the film (1600×1000).
+// Each entry becomes a film tile.
+//
+// `clip` is a short self-hosted film in /public/video. Keep them 8–10s, silent,
+// and under ~1.2 MB — they are only fetched when a visitor actually opens one,
+// so six of them cost nothing on first paint. `poster` is a still from that
+// same film (1600×1000), and it IS loaded up front, so it carries the tile.
+//
+// `streamId` is still honoured if you ever move to Cloudflare Stream for
+// longer films: set `cloudflareCustomerCode` above and give an entry a
+// streamId, and the lightbox will use Stream for that one instead.
+//
+// LABELS AND TITLES ARE DESCRIPTIVE ONLY — they say what is visibly in the
+// frame and never name a service. That is deliberate. Two of the services on
+// this site are still flagged `comingSoon`, so a tile captioned "ceramic
+// coating" would contradict its own service page. If you want service-level
+// captions, confirm what was actually sold for each vehicle first.
 export const gallery = [
   {
-    id: "911",
-    label: "Paint correction",
-    title: "993 Turbo · Two-stage correction",
+    id: "huracan-foam",
+    label: "Foam",
+    title: "Lamborghini Huracán",
     poster: "/images/work-01.jpg",
-    streamId: "", // TODO
+    clip: "/video/work-01.mp4",
+    portrait: true,
   },
   {
-    id: "defender",
-    label: "Ceramic coating",
-    title: "Defender 110 · Ceramic system",
+    id: "ghost",
+    label: "Exterior",
+    title: "Rolls-Royce Ghost",
     poster: "/images/work-02.jpg",
-    streamId: "",
+    clip: "/video/work-02.mp4",
+    portrait: true,
   },
   {
-    id: "gt",
+    id: "urus-cabin",
     label: "Interior",
-    title: "Continental GT · Leather restoration",
+    title: "Lamborghini Urus",
     poster: "/images/work-03.jpg",
-    streamId: "",
+    clip: "/video/work-03.mp4",
+    portrait: true,
   },
   {
-    id: "e30",
-    label: "Concours prep",
-    title: "E30 M3 · Show preparation",
+    id: "aston",
+    label: "Exterior",
+    title: "Aston Martin",
     poster: "/images/work-04.jpg",
-    streamId: "",
+    clip: "/video/work-04.mp4",
+    portrait: true,
   },
   {
-    id: "taycan",
-    label: "New vehicle",
-    title: "Taycan · Delivery protection",
+    id: "by-hand",
+    label: "By hand",
+    title: "Wheels, brush and foam",
     poster: "/images/work-05.jpg",
-    streamId: "",
+    clip: "/video/work-05.mp4",
+    portrait: true,
   },
   {
-    id: "bronco",
-    label: "Reset",
-    title: "Bronco · Full decontamination",
+    id: "huracan-garage",
+    label: "Collected",
+    title: "Lamborghini Huracán",
     poster: "/images/work-06.jpg",
-    streamId: "",
+    clip: "/video/work-06.mp4",
+    portrait: true,
   },
 ];
 

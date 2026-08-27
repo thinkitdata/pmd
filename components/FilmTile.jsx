@@ -40,9 +40,11 @@ export function FilmTile({ item, i = 0, onOpen }) {
           <span className="tile__label">{item.label}</span>
           <span className="tile__title">{item.title}</span>
         </span>
-        <span className="tile__play">
-          <PlayGlyph />
-        </span>
+        {(item.clip || item.streamId) && (
+          <span className="tile__play">
+            <PlayGlyph />
+          </span>
+        )}
       </span>
     </button>
   );
@@ -68,10 +70,15 @@ export function FilmLightbox({ item, onClose }) {
     };
   }, [open, handleKey]);
 
-  const src =
+  // Three ways a film can play, in order of preference:
+  //  1. a self-hosted clip in /public/video — the default, no third party
+  //  2. a Cloudflare Stream ID, if this one film is long enough to warrant it
+  //  3. nothing, in which case we say so to *us*, never to a visitor
+  const streamSrc =
     item?.streamId && site.video.cloudflareCustomerCode
       ? `https://customer-${site.video.cloudflareCustomerCode}.cloudflarestream.com/${item.streamId}/iframe?autoplay=true&muted=false`
       : null;
+  const clipSrc = item?.clip || null;
 
   return (
     <div
@@ -93,20 +100,36 @@ export function FilmLightbox({ item, onClose }) {
             </svg>
           </button>
           <div
-            className="lightbox__frame"
+            className={`lightbox__frame${
+              item.portrait ? " lightbox__frame--portrait" : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {src ? (
+            {clipSrc ? (
+              <video
+                key={clipSrc}
+                src={clipSrc}
+                poster={item.poster}
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+                controlsList="nodownload"
+                aria-label={item.title}
+              />
+            ) : streamSrc ? (
               <iframe
-                src={src}
+                src={streamSrc}
                 allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
                 allowFullScreen
                 title={item.title}
               />
             ) : (
-              <div className="placeholder">
-                Add this film&rsquo;s Cloudflare Stream ID in site.config.js
-              </div>
+              // No film for this entry. Show the still rather than a build
+              // error — a visitor should never be told to edit site.config.js.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={item.poster} alt={item.title} />
             )}
           </div>
         </>
