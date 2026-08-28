@@ -35,8 +35,20 @@ export default function AboutPage() {
         <div className="shell shell--wide">
           <div className="split split--wide-right">
             <Reveal className="frame">
-              {/* Replace with a portrait of you working. People book people. */}
-              <div className="placeholder">Portrait · 1200×1500</div>
+              {site.portrait?.src ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={site.portrait.src}
+                  alt={site.portrait.alt || ""}
+                  width={1200}
+                  height={1500}
+                />
+              ) : (
+                // Falls back to the lacquer wash rather than the words
+                // "Portrait · 1200×1500", which is a note to us and was being
+                // shown to visitors.
+                <div className="placeholder" aria-hidden="true" />
+              )}
             </Reveal>
 
             <Reveal i={1}>

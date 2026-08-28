@@ -56,7 +56,25 @@ export const site = {
   // --- contact -------------------------------------------------------------
   phone: "(678) 275-6431", // CONFIRMED — from the business card
   phoneHref: "tel:+16782756431", // CONFIRMED
-  email: "hello@primemobiledetails.com", // TODO — set this up with the domain
+  // TEMPORARY, 28 Aug 2026. This is the mailbox that already exists and is
+  // already attached to the Google Calendar behind Cal.com, so mail sent here
+  // is actually read. The previous value, hello@primemobiledetails.com, was
+  // aspirational — no MX records exist for the domain yet, so every mailto on
+  // the site pointed at an address that would bounce.
+  //
+  // A working Gmail beats a branded address that doesn't resolve. Swap this
+  // back to hello@primemobiledetails.com the day the MX records are live, and
+  // send a test message to it before you do.
+  email: "primemobiledetails.com@gmail.com",
+
+  // --- about-page portrait ------------------------------------------------
+  // People book people. Set `portrait: null` to fall back to the placeholder
+  // frame. 4:5, 1200x1500 — the .frame rule crops with object-fit: cover, so
+  // supplying the exact ratio means nothing gets trimmed unpredictably.
+  portrait: {
+    src: "/images/portrait.jpg",
+    alt: "Our lead detailer and his daughter at the back of the Prime Details van",
+  },
 
   // Mobile business: you serve an area, you don't have a storefront.
   // This shape maps directly onto LocalBusiness structured data.
