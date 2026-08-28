@@ -143,6 +143,24 @@ export default function Footer() {
         <div className="colophon">
           <span>
             © {year} {site.name}
+            {site.builtBy?.name && site.builtBy?.url && (
+              <>
+                {" · "}
+                {/* rel="noopener" but deliberately NOT "noreferrer": we want
+                    the referrer header to survive, so the agency's analytics
+                    can attribute traffic arriving from client sites. Adding
+                    noreferrer here would strip exactly the data that makes
+                    this link worth having. */}
+                <a
+                  className="colophon__credit"
+                  href={site.builtBy.url}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Site created by {site.builtBy.name}
+                </a>
+              </>
+            )}
           </span>
           {/* These town names are a real local-SEO signal for a mobile
               business — they are the phrases people actually search. */}

@@ -128,6 +128,24 @@ export const site = {
     google: "", // Google Business Profile review link
   },
 
+  // --- build credit -------------------------------------------------------
+  // The "site created by" line in the footer colophon.
+  //
+  // Config-driven rather than hardcoded because this codebase is the template
+  // for Greg's other client sites — the component stays generic and each site
+  // sets its own credit, or `builtBy: null` to hide the line entirely.
+  //
+  // SEO note, and it matters because this link will appear across a portfolio
+  // of client sites: keep the anchor text the AGENCY NAME. A plain brand credit
+  // is normal and Google treats it as such. The same link repeated site-to-site
+  // with keyword-stuffed anchor text ("Atlanta web design", "detailing SEO") is
+  // the textbook signature of a link scheme and can earn a manual action for
+  // both ends. Brand name only. No keywords. Ever.
+  builtBy: {
+    name: "Think IT Data Solutions",
+    url: "https://thinkitdata.com",
+  },
+
   // --- booking ------------------------------------------------------------
   // Your Cal.com link is "username/event-slug".
   //
