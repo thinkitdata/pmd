@@ -95,6 +95,28 @@ if (existsSync("site.config.js")) {
   if (/streamId:\s*"\S/.test(src) && /cloudflareCustomerCode:\s*""/.test(src)) {
     nag("A gallery entry has a streamId but cloudflareCustomerCode is blank — that film won't play");
   }
+
+  // The testimonials block. Empty is the CORRECT state until real quotes
+  // with real permission exist — the homepage section is gated and simply
+  // doesn't render. This is a nag, not a fail, because shipping with no
+  // testimonials is honest; shipping with invented ones is not.
+  if (/export const testimonials = \[\s*\]/.test(src)) {
+    nag("No testimonials yet — the homepage section is hidden (this is correct until real ones arrive)");
+  } else {
+    // Guard against the specific way this goes wrong again: a star rating
+    // attached to a quote that never came from a rating platform.
+    const block = (src.match(/export const testimonials = \[([\s\S]*?)\n\];/) || [])[1] || "";
+    const starred = (block.match(/stars:\s*[1-5]/g) || []).length;
+    const sourced = (block.match(/source:\s*"/g) || []).length;
+    if (starred > sourced) {
+      fail(
+        `${starred} testimonial${starred === 1 ? " has" : "s have"} a star rating but only ${sourced} record a source — ` +
+          "a star rating must come from a platform that actually has ratings, not from us"
+      );
+    } else {
+      ok(`${starred > 0 ? "Rated and sourced" : "Real"} testimonials in place`);
+    }
+  }
 }
 
 // ------------------------------------------------------------------ media --

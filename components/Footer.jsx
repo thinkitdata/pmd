@@ -142,7 +142,15 @@ export default function Footer() {
 
         <div className="colophon">
           <span>
-            © {year} {site.name}
+            {/* The copyright notice names the RIGHTS HOLDER, which is the
+                legal entity — "Prime Mobile Auto Detailing LLC" — not the
+                trading name. Everywhere else on the site (titles, copy,
+                Google Business Profile, directories) uses site.name
+                WITHOUT the LLC suffix, because Google's guidance is to
+                list the real-world name and an "LLC" in a Business
+                Profile name is a common cause of a forced name edit.
+                This one line is the exception, and it's deliberate. */}
+            © {year} {site.legalName || site.name}
             {site.builtBy?.name && site.builtBy?.url && (
               <>
                 {" · "}

@@ -209,24 +209,44 @@ export default function Home() {
       </section>
 
       {/* ======================================================= TESTIMONY */}
-      <section className="section surface-ink" style={{ paddingTop: 0 }}>
-        <div className="shell shell--wide">
-          <Reveal as="p" className="eyebrow">
-            In their words
-          </Reveal>
-          <div className="says">
-            {testimonials.map((t, i) => (
-              <Reveal as="figure" key={t.who} i={i} className="say">
-                <div className="say__stars" aria-label="Five out of five">
-                  ★★★★★
-                </div>
-                <blockquote className="say__text">{t.text}</blockquote>
-                <figcaption className="say__who">{t.who}</figcaption>
-              </Reveal>
-            ))}
+      {/* Gated on real content. While `testimonials` is empty the entire
+          section is absent from the DOM — not hidden with CSS, not an
+          empty heading, not a placeholder. Spacing is unaffected: this
+          section carried `paddingTop: 0` and so does the Instagram block
+          below it, so with this gone the Tao quote's bottom padding
+          meets Instagram at exactly the gap testimonials used to sit in.
+          See the note in site.config.js for why it's empty. */}
+      {testimonials.length > 0 && (
+        <section className="section surface-ink" style={{ paddingTop: 0 }}>
+          <div className="shell shell--wide">
+            <Reveal as="p" className="eyebrow">
+              In their words
+            </Reveal>
+            <div className="says">
+              {testimonials.map((t, i) => (
+                <Reveal as="figure" key={t.who} i={i} className="say">
+                  {/* Stars only render when the customer actually gave a
+                      rating. A quote from a text message has no star
+                      rating, and drawing one is fabricating data. */}
+                  {t.stars > 0 && (
+                    <div
+                      className="say__stars"
+                      aria-label={`${t.stars} out of five`}
+                    >
+                      {"★".repeat(t.stars)}
+                      <span aria-hidden="true" style={{ opacity: 0.25 }}>
+                        {"★".repeat(Math.max(0, 5 - t.stars))}
+                      </span>
+                    </div>
+                  )}
+                  <blockquote className="say__text">{t.text}</blockquote>
+                  <figcaption className="say__who">{t.who}</figcaption>
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ======================================================= INSTAGRAM */}
       <section className="section surface-ink" style={{ paddingTop: 0 }}>

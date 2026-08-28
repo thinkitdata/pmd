@@ -440,20 +440,47 @@ export const instagramFallback = [
 ];
 
 // ---------------------------------------------------------- testimonials --
-export const testimonials = [
-  {
-    text: "He spent forty minutes on the door jambs alone. I've paid more for less at a shop with a lobby.",
-    who: "M. Delgado · 993 Turbo",
-  },
-  {
-    text: "They turned down my Tuesday because they were already booked on another car. That told me everything.",
-    who: "S. Whitfield · Continental GT",
-  },
-  {
-    text: "Came to my driveway, left it better than the day I picked it up from the dealer. Third year in a row now.",
-    who: "R. Ahn · Taycan Turbo S",
-  },
-];
+//
+// EMPTY ON PURPOSE — 28 Aug 2026.
+//
+// This array used to hold three invented quotes from three invented people
+// with three invented cars. They read well. They were also fabricated, and
+// they were sitting on a live commercial site under a five-star rating,
+// which is a false advertising problem, not a copywriting one. They are
+// deleted, not commented out, so nobody can "restore" them by accident.
+//
+// The homepage section is gated on this array having entries: while it is
+// empty, the whole "In their words" block does not render. No empty
+// heading, no skeleton, no "coming soon". The site simply doesn't make a
+// claim it can't back.
+//
+// TO ADD A REAL ONE, you need three things from the customer:
+//   1. Their actual words. Lightly trim for length if you must; never
+//      rewrite them into something more flattering. If you'd be
+//      embarrassed to show them the edit, it's too far.
+//   2. Their permission to publish it, in writing (a text or WhatsApp
+//      message saying "yes you can use that" is fine — save it).
+//   3. How they want to be credited. "M. Delgado" vs "Marco D." vs
+//      "Marco Delgado, Marietta" is their call, not ours.
+//
+// Naming the car ("993 Turbo") is a strong trust signal, but it is also
+// identifying information about a valuable vehicle. Ask before including
+// it, and never pair a specific car with a specific neighborhood.
+//
+// `stars` is OPTIONAL and only renders if you set it. Do not set it
+// unless the customer actually gave a rating on a platform that has
+// ratings (Google, Facebook). A text message is not a five-star review,
+// and decorating one with stars is inventing data again by other means.
+//
+// Shape:
+//   {
+//     text:  "Their words, verbatim.",
+//     who:   "How they asked to be credited",
+//     stars: 5,                       // optional, omit unless real
+//     source: "Google review, 12 Sep 2026", // optional, for our records
+//   }
+//
+export const testimonials = [];
 
 // ------------------------------------------------------------------ nav --
 export const nav = [
